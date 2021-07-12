@@ -1,0 +1,122 @@
+﻿@model CryptocurrencyQuotesLibrary.Utils.PaginatedList<CryptocurrencyViewModel>
+
+@{
+    ViewData["Title"] = "Cryptocurrency Quotes";
+}
+
+<h1>Cryptocurrency Quotes</h1>
+
+<form asp-action="CryptocurrencyQuotes" method="get" >
+    <div class="form-actions no-color" style="float: right">
+        <p>
+            Search: <input type="text" name="SearchString" value="@ViewData["Filter"]" />
+        </p>
+    </div>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                <a asp-action="CryptocurrencyQuotes"
+                   asp-route-sortOrder="@ViewData["NameSorting"]"
+                   asp-route-filter="@ViewData["Filter"]">
+                   Name
+                </a>
+            </th>
+            <th>
+                Symbol
+            </th>
+            <th>
+                Logo
+            </th>
+            <th>
+                <a asp-action="CryptocurrencyQuotes"
+                   asp-route-sortOrder="@ViewData["PriceSorting"]"
+                   asp-route-filter="@ViewData["Filter"]">
+                   Price
+                </a>
+            </th>
+            <th>
+                <a asp-action="CryptocurrencyQuotes"
+                   asp-route-sortOrder="@ViewData["PercentChange1hSorting"]"
+                   asp-route-filter="@ViewData["Filter"]">
+                   Price change in 1h (%)
+                </a>
+            </th>
+            <th>
+                <a asp-action="CryptocurrencyQuotes"
+                   asp-route-sortOrder="@ViewData["PercentChange24hSorting"]"
+                   asp-route-filter="@ViewData["Filter"]">
+                   Price change in 24h (%)
+                </a>
+            </th>
+            <th>
+                <a asp-action="CryptocurrencyQuotes"
+                   asp-route-sortOrder="@ViewData["MarketCapSorting"]"
+                   asp-route-filter="@ViewData["Filter"]">
+                   Market cap
+                </a>
+            </th>
+            <th>
+                Last updated (UTC)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Symbol)
+                </td>
+                <td>
+                    <img src="@item.Logo" width="50" height="50" />
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td style = "color: @(item.PercentChange1h[0] == '-' ? "red" : "green")" }>
+                    @Html.DisplayFor(modelItem => item.PercentChange1h)
+                </td>
+                <td style = "color: @(item.PercentChange24h[0] == '-' ? "red" : "green")" }>
+                    @Html.DisplayFor(modelItem => item.PercentChange24h)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.MarketCap)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LastUpdated)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@{
+    var prevDisabled = !Model.HasPreviousPage() ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage() ? "disabled" : "";
+}
+<div>
+    <a asp-action="CryptocurrencyQuotes"
+       asp-route-sortOrder="@ViewData["CurrentSort"]"
+       asp-route-pageNumber="@(Model.PageIndex - 1)"
+       asp-route-filter="@ViewData["Filter"]"
+       class="btn @prevDisabled"
+       align="left"
+       style="border: 2px solid black; border-radius: 10px; float: left">
+        Previous
+    </a>
+    <a asp-action="CryptocurrencyQuotes"
+       asp-route-sortOrder="@ViewData["CurrentSort"]"
+       asp-route-pageNumber="@(Model.PageIndex + 1)"
+       asp-route-filter="@ViewData["Filter"]"
+       class="btn @nextDisabled"
+       align="right"
+       style="border: 2px solid black; border-radius: 10px; float: right">
+        Next
+    </a>
+</div>
